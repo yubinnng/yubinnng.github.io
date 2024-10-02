@@ -1,6 +1,6 @@
 ---
 title: Deep Dive Into PostgreSQL Logical Replication
-date: 2024-10-18 18:27:16 +08:00
+date: 2024-09-18 18:27:16 +0800
 categories: [Database]
 tags: [PostgreSQL, Database]
 ---
