@@ -38,9 +38,8 @@ social:
   email: yubinnng@outlook.com
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/yubinnng
-    - https://github.com/yubinnng
     - https://www.linkedin.com/in/yubinnng
+    - https://twitter.com/yubinnng
 
 # Site Verification Settings
 webmaster_verifications:
