@@ -7,6 +7,7 @@ tags:
   - PostgreSQL
   - Database
 ---
+
 # 1. Debezium Introduction
 
 In databases, **change data capture (CDC)** is a set of software design patterns used to determine and track the data that has changed (the "deltas") so that action can be taken using the changed data. The result is a delta-driven dataset [1]. Debezium is an open source project that provides a low latency data streaming platform for change data capture (CDC) [2]. It records all row-level changes within each database table in a change event stream, and applications simply read these streams to see the change events in the same order in which they occurred [3].
@@ -32,6 +33,7 @@ As shown in the image, the Debezium connectors for MySQL and PostgreSQL are depl
 The following diagram illustrates the architecture for PostgreSQL replication with Debezium:
 
 ![cdc-arch](/assets/img/cdc-arch.png)
+
 # 3. Debezium Features [5]
 
 Debezium provides a set of source connectors for Apache Kafka Connect. Each connector ingests changes from a different database by using that database’s features for change data capture (CDC). Unlike other approaches, such as polling or dual writes, log-based CDC as implemented by Debezium:
@@ -73,6 +75,7 @@ The PostgreSQL connector contains two main parts that work together to read and 
 
 - **A logical decoding output plug-in**. As of PostgreSQL 10+, there is a [logical replication](https://www.postgresql.org/docs/current/logical-replication.html) stream mode, called `pgoutput` that is natively supported by PostgreSQL. This means that a Debezium PostgreSQL connector can consume that replication stream without the need for additional plug-ins. This is particularly valuable for environments where installation of plug-ins is not supported or not allowed. For more information, see [Setting up PostgreSQL](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#setting-up-postgresql).
 - **Kafka Connect connector** that reads the changes produced by the chosen logical decoding output plug-in. It uses PostgreSQL’s [_streaming replication protocol_](https://www.postgresql.org/docs/current/static/logicaldecoding-walsender.html), by means of the PostgreSQL [_JDBC driver_](https://github.com/pgjdbc/pgjdbc).
+
 ## 4.3. Deployment
 
 Please find details in:
