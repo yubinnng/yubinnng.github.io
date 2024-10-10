@@ -134,7 +134,7 @@ You can build your own custom transformation by implementing a Kafka Connect and
 
 See more details in:
 
-1. [Create Custom Kafka Connect Single Message Transforms for Confluent Platform | Confluent Documentation](https://docs.confluent.io/platform/current/connect/transforms/custom.html)
+1. [Create Custom Kafka Connect Single Message Transforms for Confluent Platform - Confluent Documentation](https://docs.confluent.io/platform/current/connect/transforms/custom.html)
 2. [confluentinc/kafka-connect-insert-uuid: A Kafka Connect SMT to add a UUID to a record (github.com)](https://github.com/confluentinc/kafka-connect-insert-uuid)
 3. [kafka/connect/transforms/src/main/java/org/apache/kafka/connect/transforms/Filter.java at trunk · apache/kafka (github.com)](https://github.com/apache/kafka/blob/trunk/connect/transforms/src/main/java/org/apache/kafka/connect/transforms/Filter.java)
 
