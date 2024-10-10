@@ -153,25 +153,7 @@ When you configure a single message transformation (SMT) for a connector, you ca
 
 [[DBZ-8211] Debezium connect docker image - SMT not fully supported - Red Hat Issue Tracker](https://issues.redhat.com/projects/DBZ/issues/DBZ-8211?filter=allopenissues)
 
-# 8. Tenant/Instance Replication Filter
-
-## 8.1. Database Discriminator
-
-Configure different connectors with a specified "database.dbname": "xxx" for different tenants
-
-## 8.2. Schema Discriminator
-
-Configure different connectors with a specified"schema.include.list": "a,b,c" for different tenants
-
-## 8.3. Table Discriminator
-
-Configure different connectors with a specified "table.include.list": "a,b,c" for different tenants
-
-## 8.4. Column Discriminator
-
-Filter by the column value in change event payloads
-
-# 9. CDC Alternatives
+# 9. Alternatives
 
 [AWS Database Migration Service](https://wiki.one.int.sap/wiki/x/-aMGEgE)
 
