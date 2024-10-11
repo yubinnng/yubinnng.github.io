@@ -8,13 +8,17 @@ tags:
   - Database
 ---
 
-# 1. Debezium Introduction
+# CDC Introduction
 
-In databases, **change data capture (CDC)** is a set of software design patterns used to determine and track the data that has changed (the "deltas") so that action can be taken using the changed data. The result is a delta-driven dataset [1]. Debezium is an open source project that provides a low latency data streaming platform for change data capture (CDC) [2]. It records all row-level changes within each database table in a change event stream, and applications simply read these streams to see the change events in the same order in which they occurred [3].
+In databases, **change data capture (CDC)** is a set of software design patterns used to determine and track the data that has changed (the "deltas") so that action can be taken using the changed data. The result is a delta-driven dataset [1]. 
 
-Website: [debezium.io](https://debezium.io/).
+# Debezium Introduction
 
-# 2. Debezium Architecture [4]
+Debezium is an open source project that provides a low latency data streaming platform for change data capture (CDC) [2]. It records all row-level changes within each database table in a change event stream, and applications simply read these streams to see the change events in the same order in which they occurred [3].
+
+More details please find in [debezium.io](https://debezium.io/).
+
+# Debezium Architecture [4]
 
 Most commonly, you deploy Debezium by means of Apache [Kafka Connect](https://kafka.apache.org/documentation/#connect). Kafka Connect is a framework and runtime for implementing and operating:
 
@@ -34,7 +38,7 @@ The following diagram illustrates the architecture for PostgreSQL replication wi
 
 ![cdc-arch](/assets/img/cdc-arch.png)
 
-# 3. Debezium Features [5]
+# Debezium Features [5]
 
 Debezium provides a set of source connectors for Apache Kafka Connect. Each connector ingests changes from a different database by using that database’s features for change data capture (CDC). Unlike other approaches, such as polling or dual writes, log-based CDC as implemented by Debezium:
 
@@ -59,15 +63,15 @@ See the [connector documentation](https://debezium.io/documentation/reference/s
 
 Debezium can also be used as [library embedded](https://debezium.io/documentation/reference/stable/development/engine.html) into your JVM-based applications; via [Debezium Server](https://debezium.io/documentation/reference/stable/operations/debezium-server.html), you can emit change events to messaging infrastructure like Amazon Kinesis, Google Cloud Pub/Sub, Apache Pulsar, etc.
 
-# 4. Debezium connector for PostgreSQL (Source Connector) [6]
+# Debezium PostgreSQL Connector (Source Connector) [6]
 
-## 4.1. Introduction
+## Introduction
 
 The Debezium PostgreSQL connector **captures row-level changes** in the schemas of a PostgreSQL database.
 
 The first time it connects to a PostgreSQL server or cluster, the connector takes a consistent **snapshot** of all schemas. After that snapshot is complete, the connector continuously captures **row-level changes** that insert, update, and delete database content and that were **committed** to a PostgreSQL database. The connector generates data change event records and streams them to **Kafka** topics. Applications and services consume data change event records from that topic.
 
-## 4.2. How it works
+## How it works
 
 PostgreSQL’s [logical decoding](https://www.postgresql.org/docs/current/static/logicaldecoding-explanation.html) feature was introduced in version 9.4. It is a mechanism that allows the extraction of the changes that were committed to the transaction log and the processing of these changes in a user-friendly manner with the help of an [output plug-in](https://www.postgresql.org/docs/current/static/logicaldecoding-output-plugin.html). The output plug-in enables clients to consume the changes.
 
@@ -76,7 +80,7 @@ The PostgreSQL connector contains two main parts that work together to read and 
 - **A logical decoding output plug-in**. As of PostgreSQL 10+, there is a [logical replication](https://www.postgresql.org/docs/current/logical-replication.html) stream mode, called `pgoutput` that is natively supported by PostgreSQL. This means that a Debezium PostgreSQL connector can consume that replication stream without the need for additional plug-ins. This is particularly valuable for environments where installation of plug-ins is not supported or not allowed. For more information, see [Setting up PostgreSQL](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#setting-up-postgresql).
 - **Kafka Connect connector** that reads the changes produced by the chosen logical decoding output plug-in. It uses PostgreSQL’s [_streaming replication protocol_](https://www.postgresql.org/docs/current/static/logicaldecoding-walsender.html), by means of the PostgreSQL [_JDBC driver_](https://github.com/pgjdbc/pgjdbc).
 
-## 4.3. Deployment
+## Deployment
 
 Please find details in:
 
@@ -84,7 +88,7 @@ Please find details in:
 - [debezium-examples/tutorial at main · debezium/debezium-examples (github.com)](https://github.com/debezium/debezium-examples/tree/main/tutorial#using-postgres)
 - [container-images/connect/2.7 at main · debezium/container-images (github.com)](https://github.com/debezium/container-images/tree/main/connect/2.7)
 
-## 4.4. Initial load with Snapshots [7]
+## Initial load with Snapshots [7]
 
 Most PostgreSQL servers are configured to not retain the complete history of the database in the WAL segments. This means that the PostgreSQL connector would be unable to see the entire history of the database by reading only the WAL. Consequently, the first time that the connector starts, it performs an initial consistent snapshot of the database.
 
@@ -96,30 +100,30 @@ The default behavior for performing a snapshot consists of the following steps. 
 4. Commit the transaction.
 5. Record 
 
-## 4.5. Recapturing data with Ad hoc snapshots [8]
+## Recapturing data with Ad hoc snapshots [8]
 
 In some situations the data that the connector obtained during the initial snapshot might become stale, lost, or incomplete. To provide a mechanism for recapturing table data, Debezium includes an option to perform ad hoc snapshots.
 
 - To provide flexibility in managing snapshots, Debezium includes a supplementary snapshot mechanism, known as incremental snapshotting. In an incremental snapshot, instead of capturing the full state of a database all at once, as in an initial snapshot, Debezium captures each table in phases, in a series of configurable chunks.
 - To provide more flexibility in managing snapshots, Debezium includes a supplementary ad hoc snapshot mechanism, known as a blocking snapshot. A blocking snapshot behaves just like an initial snapshot, except that you can trigger it at run time.
 
-## 4.6. Data change events [9]
+## Data change events [9]
 
 The Debezium PostgreSQL connector generates a data change event for each row-level `INSERT`, `UPDATE`, and `DELETE` operation. Each event contains a key and a value. The structure of the key and the value depends on the table that was changed. Details please see in [Data change events - Debezium connector for PostgreSQL](https://debezium.io/documentation/reference/stable/connectors/postgresql.html#postgresql-events).
 
-# 5. Debezium connector for JDBC (Sink Connector) [10]
+# Debezium JDBC Connector (Sink Connector) [10]
 
 The Debezium JDBC connector is a Kafka Connect sink connector implementation that can consume events from multiple source topics, and then write those events to a relational database by using a JDBC driver. This connector supports a wide variety of database dialects, including Db2, MySQL, Oracle, PostgreSQL, and SQL Server.
 
-# 6. Debezium Transformations
+# Transformations
 
-## 6.1. Message Filtering [11]
+## Message Filtering [11]
 
 By default, Debezium delivers every data change event that it receives to the Kafka broker. However, in many cases, you might be interested in only a subset of the events emitted by the producer. To enable you to process only the records that are relevant to you, Debezium provides the _filter_ [single message transform](https://cwiki.apache.org/confluence/display/KAFKA/KIP-66%3A+Single+Message+Transforms+for+Kafka+Connect) (SMT).
 
 Details see in [Message Filtering :: Debezium Documentation](https://debezium.io/documentation/reference/stable/transformations/filtering.html).
 
-## 6.2. Topic Routing [12]
+## Topic Routing [12]
 
 By default, changes from one database table are written to a Kafka topic whose name corresponds to the table name. If needed, you can adjust the destination topic name by configuring Debezium’s [topic routing transformation](https://debezium.io/documentation/reference/stable/transformations/topic-routing.html#topic-routing). For example, you can:
 
@@ -128,7 +132,7 @@ By default, changes from one database table are written to a Kafka topic whose n
 
 Details see in [Topic Routing :: Debezium Documentation](https://debezium.io/documentation/reference/stable/transformations/topic-routing.html).
 
-## 6.3. Custom Transformors
+## Custom Transformors
 
 You can build your own custom transformation by implementing a Kafka Connect and then enable it in Debezium.
 
@@ -138,11 +142,11 @@ See more details in:
 2. [confluentinc/kafka-connect-insert-uuid: A Kafka Connect SMT to add a UUID to a record (github.com)](https://github.com/confluentinc/kafka-connect-insert-uuid)
 3. [kafka/connect/transforms/src/main/java/org/apache/kafka/connect/transforms/Filter.java at trunk · apache/kafka (github.com)](https://github.com/apache/kafka/blob/trunk/connect/transforms/src/main/java/org/apache/kafka/connect/transforms/Filter.java)
 
-## 6.4. SMT predicates [13]
+## SMT predicates [13]
 
 When you configure a single message transformation (SMT) for a connector, you can define a predicate for the transformation. The predicate specifies how to apply the transformation conditionally to a subset of the messages that the connector processes. You can assign predicates to transformations that you configure for source connectors, such as Debezium, or to sink connectors.
 
-# 7. Debezium Limitations
+# Limitations
 
 1. Cannot produce change events for tables that have different structures on the same topic. Therefore, the replication for different tables runs parallel. 
 2. Tables cannot be replicated in a transaction as their original business transaction.
@@ -153,11 +157,11 @@ When you configure a single message transformation (SMT) for a connector, you ca
 
 [[DBZ-8211] Debezium connect docker image - SMT not fully supported - Red Hat Issue Tracker](https://issues.redhat.com/projects/DBZ/issues/DBZ-8211?filter=allopenissues)
 
-# 9. Alternatives
+# Alternatives
 
 [AWS Database Migration Service](https://wiki.one.int.sap/wiki/x/-aMGEgE)
 
-# 10. References
+# References
 
 1. [Change data capture - Wikipedia](https://en.wikipedia.org/wiki/Change_data_capture)
 2. [debezium/debezium: Change data capture for a variety of databases. Please log issues at https://issues.redhat.com/browse/DBZ. (github.com)](https://github.com/debezium/debezium/tree/main?tab=readme-ov-file#debezium)
